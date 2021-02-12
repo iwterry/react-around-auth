@@ -21,18 +21,7 @@ function Main(props) {
 
         return api.getInitialCards();
       })
-      .then((cardsFromApi) => {
-        const initialCards = cardsFromApi.map(({ name, link, likes, _id }) => {
-          return {
-            name,
-            link,
-            numLikes: likes.length,
-            id: _id
-          };
-        });
-
-        setCards(initialCards);
-      })
+      .then((cardsFromApi) => setCards(cardsFromApi))
       .catch(logErrors);
   }, []);
 
@@ -53,9 +42,15 @@ function Main(props) {
 
       <section className="locations">
         <ul className="locations__collection">
-        {cards.map((card) => {
+        {cards.map(({ name, link, likes, _id: id }) => {
+          const numLikes = likes.length;
+                
           return (
-            <Card card={card} key={card.id} onCardClick={onCardClick} />
+            <Card
+              key={id}
+              card={{ name, link, numLikes, id }}
+              onCardClick={onCardClick} 
+            />
           );
         })}
         </ul>
