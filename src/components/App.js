@@ -11,6 +11,7 @@ import api from '../utils/api.js';
 import { logErrors } from '../utils/utils.js';
 
 import defaultAvatar from '../images/profile-avatar.jpg';
+import EditProfilePopup from './EditProfilePopup.js';
 
 function App() {
   const [ isEditProfilePopupOpen, setIsEditProfilePopupOpen ]  = React.useState(false);
@@ -71,6 +72,17 @@ function App() {
     });
   }
 
+  function handleUpdateUser(name, about) {
+    api.updateUserProfile(name, about)
+      .then((updatedUser) => setCurrentUser({
+        ...currentUser,
+        name: updatedUser.name,
+        about: updatedUser.about 
+      }))
+      .catch(logErrors)
+      .finally(closeAllPopups);
+  }
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -94,36 +106,7 @@ function App() {
         />
         <Footer />
         
-        <PopupWithForm name="profile-edit" title="Edit profile" isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}>
-          <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-edit">
-            <input 
-              type="text"
-              aria-label="Name"
-              name="profileName"
-              id="profile-name-input"
-              className="project-form__input project-form__input_type_profile-edit-field"
-              placeholder="Name"
-              minLength="2"
-              maxLength="40"
-              required
-            />
-            <p className="project-form__input-error project-form__input-error_field_profile-name-input"></p>
-          </div>
-          <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-edit">
-            <input
-              type="text"
-              aria-label="About me"
-              name="aboutMe"
-              id="profile-about-me-input"
-              className="project-form__input project-form__input_type_profile-edit-field"
-              placeholder="About me"
-              minLength="2"
-              maxLength="200"
-              required
-            />
-            <p className="project-form__input-error project-form__input-error_field_profile-about-me-input"></p>
-          </div>
-        </PopupWithForm>
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
         <PopupWithForm name="location-create" title="New place" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
           <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">

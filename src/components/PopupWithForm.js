@@ -1,7 +1,7 @@
 import React from 'react';
 
 function PopupWithForm(props) {
-  const { name, title, children, isOpen, onClose } = props;
+  const { name, title, children, isOpen, onClose, onSubmit } = props;
 
   return (
     <div className={`overlay ${isOpen ? 'overlay_opened' : ''}`}>
@@ -13,7 +13,7 @@ function PopupWithForm(props) {
           onClick={onClose}
         >
         </button>
-        <form name={name} className={`project-form project-form_type_${name}`} noValidate> 
+        <form name={name} className={`project-form project-form_type_${name}`} onSubmit={onSubmit} noValidate> 
           <h3 className={`project-form__title project-form__title_type_${name}`}>
             {title}
           </h3>
