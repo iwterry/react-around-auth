@@ -13,6 +13,7 @@ import { logErrors } from '../utils/utils.js';
 import defaultAvatar from '../images/profile-avatar.jpg';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
+import AddPlacePopup from './AddPlacePopup.js';
 
 function App() {
   const [ isEditProfilePopupOpen, setIsEditProfilePopupOpen ]  = React.useState(false);
@@ -94,6 +95,13 @@ function App() {
       .finally(closeAllPopups);
   }
 
+  function handleAddPlace(name, link) {
+    api.createCard(name, link)
+      .then((newCard) => setCards([newCard, ...cards]))
+      .catch(logErrors)
+      .finally(closeAllPopups);
+  }
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -119,34 +127,7 @@ function App() {
         
         <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
 
-        <PopupWithForm name="location-create" title="New place" isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}>
-          <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">
-            <input 
-              type="text"
-              aria-label="Title"
-              name="locationTitle"
-              id="location-title-input"
-              className="project-form__input project-form__input_type_location-create-field"
-              placeholder="Title"
-              minLength="2"
-              maxLength="30"
-              required
-            />
-            <p className="project-form__input-error project-form__input-error_field_location-title-input"></p>
-          </div>
-          <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">
-            <input
-              type="url"
-              aria-label="Image link"
-              name="imageLink"
-              id="location-image-link-input"
-              className="project-form__input project-form__input_type_location-create-field"
-              placeholder="Image link"
-              required
-            />
-            <p className="project-form__input-error project-form__input-error_field_location-image-link-input"></p>
-          </div>
-        </PopupWithForm>
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace} />
 
         <PopupWithForm 
           name="confirmation-prompt" 
