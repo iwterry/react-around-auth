@@ -12,6 +12,7 @@ import { logErrors } from '../utils/utils.js';
 
 import defaultAvatar from '../images/profile-avatar.jpg';
 import EditProfilePopup from './EditProfilePopup.js';
+import EditAvatarPopup from './EditAvatarPopup.js';
 
 function App() {
   const [ isEditProfilePopupOpen, setIsEditProfilePopupOpen ]  = React.useState(false);
@@ -83,6 +84,16 @@ function App() {
       .finally(closeAllPopups);
   }
 
+  function handleUpdateAvatar(avatar) {
+    api.updateUserAvatar(avatar)
+      .then((updatedUser) => setCurrentUser({
+        ...currentUser,
+        avatar: updatedUser.avatar
+      }))
+      .catch(logErrors)
+      .finally(closeAllPopups);
+  }
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -144,20 +155,7 @@ function App() {
           onClose={closeAllPopups}
         />
           
-        <PopupWithForm name="profile-img-change" title="Change profile picture" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
-          <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-img-change">
-            <input
-              type="url"
-              aria-label="Avatar link"
-              name="avatarLink"
-              id="profile-image-link-input"
-              className="project-form__input project-form__input_type_profile-img-change-field"
-              placeholder="Avatar link"
-              required
-            />
-            <p className="project-form__input-error project-form__input-error_field_profile-image-link-input"></p>
-          </div>
-        </PopupWithForm>
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </div>
