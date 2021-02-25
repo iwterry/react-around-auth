@@ -23,12 +23,33 @@ function App() {
     avatar: defaultAvatar,
     _id: null
   });
+  const [ cards, setCards ] = React.useState([]);
+  const [ idOfCardToBeDeleted, setIdOfCardToBeDeleted ] = React.useState(null);
 
   React.useEffect(() => {
     api.getUserProfile()
       .then(({ _id, name, about, avatar }) => setCurrentUser({ _id, name, about, avatar }))
       .catch(logErrors);
   }, []);
+
+  React.useEffect(() => {
+    api.getInitialCards()
+      .then(setCards)
+      .catch(logErrors);
+  }, []);
+
+  function handleCardLike(clickedCardId, isClickedCardLikedAlreadyByUser) {
+    api.updateCardLikes(clickedCardId, !isClickedCardLikedAlreadyByUser)
+      .then((updatedCard) => {
+        const updatedCards = cards.map((card) => card._id === clickedCardId ? updatedCard : card);
+        setCards(updatedCards);
+      })
+      .catch(logErrors);
+  }
+
+  function handleCardDelete(cardToBeDeletedId) {
+    setIdOfCardToBeDeleted(cardToBeDeletedId);
+  }
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(true);
@@ -42,7 +63,7 @@ function App() {
     setIsAddPlacePopupOpen(true);
   }
 
-  function handleCardClick(cardId, cardName, cardLink) {
+  function handleCardSelect(cardId, cardName, cardLink) {
     setSelectedCard({
       _id: cardId,
       name: cardName, 
@@ -54,6 +75,7 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setIdOfCardToBeDeleted(null);
     setSelectedCard({ ...selectedCard, _id: null });
   }
 
@@ -64,8 +86,11 @@ function App() {
         <Main
           onEditAvatar={handleEditAvatarClick}
           onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick} 
-          onCardClick={handleCardClick}
+          onAddPlace={handleAddPlaceClick}
+          onCardDelete={handleCardDelete} 
+          onCardSelect={handleCardSelect}
+          onCardLike={handleCardLike}
+          cards={cards}
         />
         <Footer />
         
@@ -129,10 +154,13 @@ function App() {
           </div>
         </PopupWithForm>
 
-        <PopupWithForm name="confirmation-prompt" title="Are you sure?">
-          <input type="hidden" name="id" className="project-form__input project-form__input_hidden" />
-        </PopupWithForm>
-
+        <PopupWithForm 
+          name="confirmation-prompt" 
+          title="Are you sure?" 
+          isOpen={idOfCardToBeDeleted != null} 
+          onClose={closeAllPopups}
+        />
+          
         <PopupWithForm name="profile-img-change" title="Change profile picture" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}>
           <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-img-change">
             <input
