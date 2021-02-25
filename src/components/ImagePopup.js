@@ -4,7 +4,7 @@ function ImagePopup(props) {
   const { card, onClose } = props;
 
   return (
-    <div className={`overlay overlay_dark ${card.id==null ? '' : 'overlay_opened'}`}>
+    <div className={`overlay overlay_dark ${card._id==null ? '' : 'overlay_opened'}`}>
       <div className="overlay__wrapper">
         <button
           type="button"
