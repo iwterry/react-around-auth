@@ -1,7 +1,10 @@
 import React from 'react';
 
 function PopupWithForm(props) {
-  const { name, title, children, isOpen, onClose, onSubmit } = props;
+  const { name, title, children, isOpen, onClose, onSubmit, isSubmitBtnDisabled } = props;
+
+  const submitBtnClassName = `project-form__submit-btn project-form__submit-btn_type_${name}` + 
+    (isSubmitBtnDisabled ? ' project-form__submit-btn_disabled' : '');
 
   return (
     <div className={`overlay ${isOpen ? 'overlay_opened' : ''}`}>
@@ -18,7 +21,7 @@ function PopupWithForm(props) {
             {title}
           </h3>
           {children}
-          <button type="submit" className={`project-form__submit-btn project-form__submit-btn_type_${name}`}>
+          <button type="submit" className={submitBtnClassName} disabled={isSubmitBtnDisabled}>
             Save
           </button>
         </form>

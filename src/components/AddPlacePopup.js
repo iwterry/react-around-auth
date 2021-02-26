@@ -4,9 +4,12 @@ import PopupWithForm from './PopupWithForm';
 
 function AddPlacePopup(props) {
   const { isOpen, onClose, onAddPlace } = props;
-  const [ title, setTitle ] = React.useState('');
-  const [ link, setLink ] = React.useState('');
+
   const [ errors, setErrors ] = React.useState({});
+  const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(true);
+
+  const titleInputRef = React.useRef();
+  const linkInputRef = React.useRef();
 
   const fieldNames = {
     placeTitle: 'location-title',
@@ -18,24 +21,29 @@ function AddPlacePopup(props) {
   function handleSubmit(evt) {
     evt.preventDefault();
 
-    onAddPlace(title, link);
+    onAddPlace(titleInputRef.current.value, linkInputRef.current.value);
 
-    setTitle('');
-    setLink('');
+    titleInputRef.current.value = '';
+    linkInputRef.current.value = '';
   }
 
-  function handleInputChange({ target }) {
-    switch(target.name) {
-      case fieldNames.placeTitle:
-        setTitle(target.value);
-      case fieldNames.placeLink:
-        setLink(target.value);
-    }
+  function handleInputValidation({ target }) {
     setErrors(getInputErrors(errors, target));
+    setIsSubmitBtnDisabled(
+      !titleInputRef.current.validity.valid ||
+      !linkInputRef.current.validity.valid
+    );
   }
 
   return (
-    <PopupWithForm name="location-create" title="New place" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
+    <PopupWithForm 
+      name="location-create" 
+      title="New place" 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      onSubmit={handleSubmit} 
+      isSubmitBtnDisabled={isSubmitBtnDisabled}
+    >
       <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">
         <input 
           type="text"
@@ -45,7 +53,9 @@ function AddPlacePopup(props) {
           placeholder="Title"
           minLength="2"
           maxLength="30"
-          onChange={handleInputChange}
+          ref={titleInputRef}
+          onChange={handleInputValidation}
+          onBlur={handleInputValidation}
           required
         />
         <p className={titleFieldErrorClassName}>{errors[fieldNames.placeTitle]}</p>
@@ -57,7 +67,9 @@ function AddPlacePopup(props) {
           name={fieldNames.placeLink}
           className="project-form__input project-form__input_type_location-create-field"
           placeholder="Image link"
-          onChange={handleInputChange}
+          ref={linkInputRef}
+          onChange={handleInputValidation}
+          onBlur={handleInputValidation}
           required
         />
         <p className={linkFieldErrorClassName}>{errors[fieldNames.placeLink]}</p>

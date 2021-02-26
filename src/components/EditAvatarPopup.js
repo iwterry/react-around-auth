@@ -5,8 +5,11 @@ import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils';
 
 function EditAvatarPopup(props) {
   const { isOpen, onClose, onUpdateAvatar } = props;
-  const avatarInputRef = React.createRef();
+  
   const [error, setError] = React.useState({});
+  const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(true);
+
+  const avatarInputRef = React.createRef();
 
   const profileAvatarFieldName = 'profile-avatar';
   const avatarFieldErrorClassName = getInputFieldErrorClassName(error, profileAvatarFieldName);
@@ -20,13 +23,20 @@ function EditAvatarPopup(props) {
     avatarInputElement.value = '';
   }
 
-  function handleInputChange({ target: inputElement }) {
+  function handleInputValidation({ target: inputElement }) {
     setError(getInputErrors(error, inputElement));
-    console.log(error);
+    setIsSubmitBtnDisabled(!avatarInputRef.current.validity.valid);
   }
       
   return (
-    <PopupWithForm name="profile-img-change" title="Change profile picture" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
+    <PopupWithForm 
+      name="profile-img-change" 
+      title="Change profile picture" 
+      isOpen={isOpen} 
+      onClose={onClose} 
+      onSubmit={handleSubmit}
+      isSubmitBtnDisabled={isSubmitBtnDisabled}
+    >
       <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-img-change">
         <input
           type="url"
@@ -35,7 +45,8 @@ function EditAvatarPopup(props) {
           className="project-form__input project-form__input_type_profile-img-change-field"
           placeholder="Avatar link"
           ref={avatarInputRef}
-          onChange={handleInputChange}
+          onChange={handleInputValidation}
+          onBlur={handleInputValidation}
           required
         />
         <p className={avatarFieldErrorClassName}>{error[profileAvatarFieldName]}</p>
