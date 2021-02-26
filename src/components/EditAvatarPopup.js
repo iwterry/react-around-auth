@@ -12,7 +12,7 @@ function EditAvatarPopup(props) {
   const avatarInputRef = React.createRef();
 
   const profileAvatarFieldName = 'profile-avatar';
-  const avatarFieldErrorClassName = getInputFieldErrorClassName(error, profileAvatarFieldName);
+  const avatarFieldErrorClassName = getInputFieldErrorClassName(error, profileAvatarFieldName, isOpen);
 
   function handleSubmit(evt) {
     evt.preventDefault();

@@ -13,12 +13,12 @@ export function getInputErrors(errors, inputElement) {
   return errs;
 }
 
-export function getInputFieldErrorClassName(fieldErrors, fieldName) {
+export function getInputFieldErrorClassName(fieldErrors, fieldName, isErrorShown) {
   const inputErrorBlockElement = 'project-form__input-error';
   
   const fieldErrorClassName = inputErrorBlockElement +
     ` ${inputErrorBlockElement}_field_${fieldName}` +
-    (fieldErrors[fieldName] != null ? ` ${inputErrorBlockElement}_active` : '');
+    (fieldErrors[fieldName] != null && isErrorShown ? ` ${inputErrorBlockElement}_active` : '');
 
   return fieldErrorClassName;
 }

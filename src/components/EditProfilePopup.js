@@ -18,8 +18,8 @@ function EditProfilePopup(props) {
     profileName: 'profile-name',
     profileDescription: 'profile-description'
   }
-  const nameFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileName);
-  const descriptionFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileDescription);
+  const nameFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileName, isOpen);
+  const descriptionFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileDescription, isOpen);
 
   const PROFILE_NAME_MAX_LENGTH = 40;
   const PROFILE_NAME_MIN_LENGTH = 2;

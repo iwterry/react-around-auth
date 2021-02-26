@@ -15,8 +15,8 @@ function AddPlacePopup(props) {
     placeTitle: 'location-title',
     placeLink: 'location-link'
   }
-  const titleFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeTitle);
-  const linkFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeLink);
+  const titleFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeTitle, isOpen);
+  const linkFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeLink, isOpen);
 
   function handleSubmit(evt) {
     evt.preventDefault();
