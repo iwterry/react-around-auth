@@ -5,7 +5,6 @@ import CurrentUserContext from '../contexts/CurrentUserContext.js';
 import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
-import PopupWithForm from './PopupWithForm.js';
 import ImagePopup from './ImagePopup.js';
 import api from '../utils/api.js';
 import { logErrors } from '../utils/utils.js';
@@ -14,6 +13,7 @@ import defaultAvatar from '../images/profile-avatar.jpg';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
+import ConfirmationPromptPopup from './ConfirmationPromptPopup.js';
 
 function App() {
   const [ isEditProfilePopupOpen, setIsEditProfilePopupOpen ]  = React.useState(false);
@@ -50,8 +50,8 @@ function App() {
       .catch(logErrors);
   }
 
-  function handleCardDelete(cardToBeDeletedId) {
-    setIdOfCardToBeDeleted(cardToBeDeletedId);
+  function handleCardDelete(id) {
+    setIdOfCardToBeDeleted(id);
   }
 
   function handleEditAvatarClick() {
@@ -102,6 +102,17 @@ function App() {
       .finally(closeAllPopups);
   }
 
+  function handleConfirmation() {
+    api.deleteCard(idOfCardToBeDeleted)
+      .then((data) => {
+        console.log('returned:', data);
+        const updatedCards = cards.filter((aCard) => aCard._id !== idOfCardToBeDeleted);
+        setCards(updatedCards);
+      })
+      .catch(logErrors)
+      .finally(closeAllPopups);
+  }
+
   function closeAllPopups() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
@@ -129,12 +140,7 @@ function App() {
 
         <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace} />
 
-        <PopupWithForm 
-          name="confirmation-prompt" 
-          title="Are you sure?" 
-          isOpen={idOfCardToBeDeleted != null} 
-          onClose={closeAllPopups}
-        />
+        <ConfirmationPromptPopup isOpen={idOfCardToBeDeleted !== null} onClose={closeAllPopups} onConfirmation={handleConfirmation} />
           
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
 
