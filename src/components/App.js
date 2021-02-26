@@ -28,6 +28,10 @@ function App() {
   });
   const [ cards, setCards ] = React.useState([]);
   const [ idOfCardToBeDeleted, setIdOfCardToBeDeleted ] = React.useState(null);
+  const [ isUpdatingAvatar, setIsUpdatingAvatar ] = React.useState(false);
+  const [ isUpdatingProfile, setIsUpdatingProfile ] = React.useState(false);
+  const [ isCreatingPlace, setIsCreatingPlace ] = React.useState(false);
+  const [ isDeletingAfterConfirming, setIsDeletingAfterConfirming ] = React.useState(false);
 
   React.useEffect(() => {
     api.getUserProfile()
@@ -75,6 +79,7 @@ function App() {
   }
 
   function handleUpdateUser(name, about) {
+    setIsUpdatingProfile(true);
     api.updateUserProfile(name, about)
       .then((updatedUser) => setCurrentUser({
         ...currentUser,
@@ -82,27 +87,39 @@ function App() {
         about: updatedUser.about 
       }))
       .catch(logErrors)
-      .finally(closeAllPopups);
+      .finally(() => {
+        closeAllPopups();
+        setIsUpdatingProfile(false);
+      });
   }
 
   function handleUpdateAvatar(avatar) {
+    setIsUpdatingAvatar(true);
     api.updateUserAvatar(avatar)
       .then((updatedUser) => setCurrentUser({
         ...currentUser,
         avatar: updatedUser.avatar
       }))
       .catch(logErrors)
-      .finally(closeAllPopups);
+      .finally(() => {
+        closeAllPopups();
+        setIsUpdatingAvatar(false);
+      });
   }
 
   function handleAddPlace(name, link) {
+    setIsCreatingPlace(true);
     api.createCard(name, link)
       .then((newCard) => setCards([newCard, ...cards]))
       .catch(logErrors)
-      .finally(closeAllPopups);
+      .finally(() => {
+        closeAllPopups();
+        setIsCreatingPlace(false);
+      });
   }
 
   function handleConfirmation() {
+    setIsDeletingAfterConfirming(true);
     api.deleteCard(idOfCardToBeDeleted)
       .then((data) => {
         console.log('returned:', data);
@@ -110,7 +127,10 @@ function App() {
         setCards(updatedCards);
       })
       .catch(logErrors)
-      .finally(closeAllPopups);
+      .finally(() => {
+        closeAllPopups();
+        setIsDeletingAfterConfirming(false);
+      });
   }
 
   function closeAllPopups() {
@@ -136,13 +156,13 @@ function App() {
         />
         <Footer />
         
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isUpdatingProfile={isUpdatingProfile} />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace} />
+        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace} isCreatingPlace={isCreatingPlace} />
 
-        <ConfirmationPromptPopup isOpen={idOfCardToBeDeleted !== null} onClose={closeAllPopups} onConfirmation={handleConfirmation} />
+        <ConfirmationPromptPopup isOpen={idOfCardToBeDeleted !== null} onClose={closeAllPopups} onConfirmation={handleConfirmation} isDeletingAfterConfirming={isDeletingAfterConfirming} />
           
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isUpdatingAvatar={isUpdatingAvatar} />
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </div>

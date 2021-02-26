@@ -1,7 +1,7 @@
 import React from 'react';
 
 function PopupWithForm(props) {
-  const { name, title, children, isOpen, onClose, onSubmit, isSubmitBtnDisabled } = props;
+  const { name, title, children, isOpen, onClose, onSubmit, isSubmitBtnDisabled, submitBtnText } = props;
 
   const submitBtnClassName = `project-form__submit-btn project-form__submit-btn_type_${name}` + 
     (isSubmitBtnDisabled ? ' project-form__submit-btn_disabled' : '');
@@ -22,7 +22,7 @@ function PopupWithForm(props) {
           </h3>
           {children}
           <button type="submit" className={submitBtnClassName} disabled={isSubmitBtnDisabled}>
-            Save
+            {submitBtnText || 'Submit'}
           </button>
         </form>
       </div>

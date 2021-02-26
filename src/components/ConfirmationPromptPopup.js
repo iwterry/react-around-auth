@@ -2,7 +2,7 @@ import React from 'react';
 import PopupWithForm from './PopupWithForm';
 
 function ConfirmationPromptPopup(props) {
-  const { isOpen, onClose, onConfirmation } = props;
+  const { isOpen, onClose, onConfirmation, isDeletingAfterConfirming } = props;
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -16,6 +16,8 @@ function ConfirmationPromptPopup(props) {
       isOpen={isOpen} 
       onClose={onClose}
       onSubmit={handleSubmit}
+      isSubmitBtnDisabled={isDeletingAfterConfirming}
+      submitBtnText={"Yes"}
     />
   );
 }

@@ -3,13 +3,13 @@ import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils';
 import PopupWithForm from './PopupWithForm';
 
 function AddPlacePopup(props) {
-  const { isOpen, onClose, onAddPlace } = props;
+  const { isOpen, onClose, onAddPlace, isCreatingPlace } = props;
 
   const [ errors, setErrors ] = React.useState({});
   const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(true);
 
-  const titleInputRef = React.useRef();
-  const linkInputRef = React.useRef();
+  const titleInputRef = React.useRef({value: ''});
+  const linkInputRef = React.useRef({value: ''});
 
   const fieldNames = {
     placeTitle: 'location-title',
@@ -17,6 +17,19 @@ function AddPlacePopup(props) {
   }
   const titleFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeTitle, isOpen);
   const linkFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeLink, isOpen);
+
+  React.useEffect(() => {
+    checkIfSubmitBtnShouldBeDisabled();
+  }, [isCreatingPlace]);
+
+  function checkIfSubmitBtnShouldBeDisabled() {
+    const hasInvalidInput = (  
+      !titleInputRef.current.validity.valid ||
+      !linkInputRef.current.validity.valid
+    );
+
+    setIsSubmitBtnDisabled(isCreatingPlace || hasInvalidInput);
+  }
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -29,10 +42,7 @@ function AddPlacePopup(props) {
 
   function handleInputValidation({ target }) {
     setErrors(getInputErrors(errors, target));
-    setIsSubmitBtnDisabled(
-      !titleInputRef.current.validity.valid ||
-      !linkInputRef.current.validity.valid
-    );
+    checkIfSubmitBtnShouldBeDisabled();
   }
 
   return (
@@ -43,6 +53,7 @@ function AddPlacePopup(props) {
       onClose={onClose} 
       onSubmit={handleSubmit} 
       isSubmitBtnDisabled={isSubmitBtnDisabled}
+      submitBtnText={isCreatingPlace ? 'Saving' : 'Save'}
     >
       <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">
         <input 

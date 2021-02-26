@@ -4,7 +4,7 @@ import PopupWithForm from './PopupWithForm';
 import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils';
 
 function EditAvatarPopup(props) {
-  const { isOpen, onClose, onUpdateAvatar } = props;
+  const { isOpen, onClose, onUpdateAvatar, isUpdatingAvatar } = props;
   
   const [error, setError] = React.useState({});
   const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(true);
@@ -13,6 +13,10 @@ function EditAvatarPopup(props) {
 
   const profileAvatarFieldName = 'profile-avatar';
   const avatarFieldErrorClassName = getInputFieldErrorClassName(error, profileAvatarFieldName, isOpen);
+
+  React.useEffect(() => {
+    checkIfSubmitBtnShouldBeDisabled();
+  }, [isUpdatingAvatar]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -23,9 +27,15 @@ function EditAvatarPopup(props) {
     avatarInputElement.value = '';
   }
 
+  function checkIfSubmitBtnShouldBeDisabled() {
+    const hasInvalidInput = !avatarInputRef.current.validity.valid;
+
+    setIsSubmitBtnDisabled(isUpdatingAvatar || hasInvalidInput);
+  }
+
   function handleInputValidation({ target: inputElement }) {
     setError(getInputErrors(error, inputElement));
-    setIsSubmitBtnDisabled(!avatarInputRef.current.validity.valid);
+    checkIfSubmitBtnShouldBeDisabled();
   }
       
   return (
@@ -36,6 +46,7 @@ function EditAvatarPopup(props) {
       onClose={onClose} 
       onSubmit={handleSubmit}
       isSubmitBtnDisabled={isSubmitBtnDisabled}
+      submitBtnText={isUpdatingAvatar ? 'Saving' : 'Save'}
     >
       <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-img-change">
         <input

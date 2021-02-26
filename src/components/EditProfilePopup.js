@@ -5,12 +5,12 @@ import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils.js';
 import PopupWithForm from "./PopupWithForm.js";
 
 function EditProfilePopup(props) {
-  const { isOpen, onClose, onUpdateUser } = props;
+  const { isOpen, onClose, onUpdateUser, isUpdatingProfile } = props;
 
   const [ name, setName ] = React.useState('');
   const [ description, setDescription ] = React.useState('');
   const [ errors, setErrors ] = React.useState({});
-  const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(true);
+  const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(false);
 
   const currentUser = React.useContext(CurrentUserContext);
 
@@ -33,15 +33,17 @@ function EditProfilePopup(props) {
 
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
-  }, [name, description]);
+  }, [name, description, isUpdatingProfile]);
 
   function checkIfSubmitBtnShouldBeDisabled() {
-    setIsSubmitBtnDisabled(
+    const hasInvalidInput = (
       name.length < PROFILE_NAME_MIN_LENGTH ||
       name.length > PROFILE_NAME_MAX_LENGTH ||
       description.length < PROFILE_NAME_MIN_LENGTH ||
       description.length > PROFILE_DESCRIPTION_MAX_LENGTH
     );
+
+    setIsSubmitBtnDisabled(isUpdatingProfile || hasInvalidInput);
   }
 
   function handleInputChange({ target }) {
@@ -75,6 +77,7 @@ function EditProfilePopup(props) {
       onClose={onClose} 
       onSubmit={handleSubmit} 
       isSubmitBtnDisabled={isSubmitBtnDisabled}
+      submitBtnText={isUpdatingProfile ? 'Saving' : 'Save'}
     >
       <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-edit">
         <input 
