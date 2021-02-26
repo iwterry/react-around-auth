@@ -33,7 +33,7 @@ function EditProfilePopup(props) {
 
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
-  }, [name, description, isUpdatingProfile]);
+  }, [name, description, isUpdatingProfile, isOpen]);
 
   function checkIfSubmitBtnShouldBeDisabled() {
     const hasInvalidInput = (
@@ -43,7 +43,7 @@ function EditProfilePopup(props) {
       description.length > PROFILE_DESCRIPTION_MAX_LENGTH
     );
 
-    setIsSubmitBtnDisabled(isUpdatingProfile || hasInvalidInput);
+    setIsSubmitBtnDisabled(isUpdatingProfile || hasInvalidInput || !isOpen);
   }
 
   function handleInputChange({ target }) {

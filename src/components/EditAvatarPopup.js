@@ -16,7 +16,7 @@ function EditAvatarPopup(props) {
 
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
-  }, [isUpdatingAvatar]);
+  }, [isUpdatingAvatar, isOpen]);
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -30,7 +30,7 @@ function EditAvatarPopup(props) {
   function checkIfSubmitBtnShouldBeDisabled() {
     const hasInvalidInput = !avatarInputRef.current.validity.valid;
 
-    setIsSubmitBtnDisabled(isUpdatingAvatar || hasInvalidInput);
+    setIsSubmitBtnDisabled(isUpdatingAvatar || hasInvalidInput || !isOpen);
   }
 
   function handleInputValidation({ target: inputElement }) {

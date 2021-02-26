@@ -16,7 +16,7 @@ function ConfirmationPromptPopup(props) {
       isOpen={isOpen} 
       onClose={onClose}
       onSubmit={handleSubmit}
-      isSubmitBtnDisabled={isDeletingAfterConfirming}
+      isSubmitBtnDisabled={isDeletingAfterConfirming || !isOpen}
       submitBtnText={"Yes"}
     />
   );

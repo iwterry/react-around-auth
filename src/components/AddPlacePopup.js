@@ -20,7 +20,7 @@ function AddPlacePopup(props) {
 
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
-  }, [isCreatingPlace]);
+  }, [isCreatingPlace, isOpen]);
 
   function checkIfSubmitBtnShouldBeDisabled() {
     const hasInvalidInput = (  
@@ -28,7 +28,7 @@ function AddPlacePopup(props) {
       !linkInputRef.current.validity.valid
     );
 
-    setIsSubmitBtnDisabled(isCreatingPlace || hasInvalidInput);
+    setIsSubmitBtnDisabled(isCreatingPlace || hasInvalidInput || !isOpen);
   }
 
   function handleSubmit(evt) {
