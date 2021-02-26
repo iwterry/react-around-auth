@@ -1,7 +1,7 @@
 import React from 'react';
 
 import CurrentUserContext from '../contexts/CurrentUserContext.js';
-import { logErrors } from '../utils/utils.js';
+import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils.js';
 import PopupWithForm from "./PopupWithForm.js";
 
 function EditProfilePopup(props) {
@@ -9,8 +9,16 @@ function EditProfilePopup(props) {
 
   const [ name, setName ] = React.useState('');
   const [ description, setDescription ] = React.useState('');
+  const [ errors, setErrors ] = React.useState({});
 
   const currentUser = React.useContext(CurrentUserContext);
+
+  const fieldNames = {
+    profileName: 'profile-name',
+    profileDescription: 'profile-description'
+  }
+  const nameFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileName);
+  const descriptionFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileDescription);
 
   React.useEffect(() => {
     setName(currentUser.name);
@@ -19,15 +27,15 @@ function EditProfilePopup(props) {
 
   function handleInputChange({ target }) {
     switch(target.name) {
-      case 'name':
+      case fieldNames.profileName:
         setName(target.value);
         break;
-      case 'description':
+      case fieldNames.profileDescription:
         setDescription(target.value);
         break;
-      default:
-        logErrors(new Error('Different value found for "name" attribute of form input field than what is expected.'));
     }
+
+    setErrors(getInputErrors(errors, target));
   }
 
   function handleSubmit(evt) {
@@ -41,8 +49,8 @@ function EditProfilePopup(props) {
         <input 
           type="text"
           aria-label="Name"
-          name="name"
-          className="project-form__input project-form__input_type_profile-edit-field"
+          name={fieldNames.profileName}
+          className={"project-form__input project-form__input_type_profile-edit-field"}
           placeholder="Name"
           minLength="2"
           maxLength="40"
@@ -50,13 +58,13 @@ function EditProfilePopup(props) {
           onChange={handleInputChange}
           required
         />
-        <p className="project-form__input-error project-form__input-error_field_profile-name-input"></p>
+        <p className={nameFieldErrorClassName}>{errors[fieldNames.profileName]}</p>
       </div>
       <div className="project-form__field-wrapper project-form__field-wrapper_form_profile-edit">
         <input
           type="text"
           aria-label="About me"
-          name="description"
+          name={fieldNames.profileDescription}
           className="project-form__input project-form__input_type_profile-edit-field"
           placeholder="About me"
           minLength="2"
@@ -65,10 +73,11 @@ function EditProfilePopup(props) {
           onChange={handleInputChange}
           required
         />
-        <p className="project-form__input-error project-form__input-error_field_profile-about-me-input"></p>
+        <p className={descriptionFieldErrorClassName}>{errors[fieldNames.profileDescription]}</p>
       </div>
     </PopupWithForm>
   );
 }
 
 export default EditProfilePopup;
+

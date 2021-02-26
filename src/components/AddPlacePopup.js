@@ -1,11 +1,19 @@
 import React from 'react';
-import { logErrors } from '../utils/utils';
+import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils';
 import PopupWithForm from './PopupWithForm';
 
 function AddPlacePopup(props) {
   const { isOpen, onClose, onAddPlace } = props;
   const [ title, setTitle ] = React.useState('');
   const [ link, setLink ] = React.useState('');
+  const [ errors, setErrors ] = React.useState({});
+
+  const fieldNames = {
+    placeTitle: 'location-title',
+    placeLink: 'location-link'
+  }
+  const titleFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeTitle);
+  const linkFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeLink);
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -18,13 +26,12 @@ function AddPlacePopup(props) {
 
   function handleInputChange({ target }) {
     switch(target.name) {
-      case 'title':
+      case fieldNames.placeTitle:
         setTitle(target.value);
-      case 'link':
+      case fieldNames.placeLink:
         setLink(target.value);
-      default:
-        logErrors(new Error('Different value found for "name" attribute of form input field than what is expected.'));
     }
+    setErrors(getInputErrors(errors, target));
   }
 
   return (
@@ -33,7 +40,7 @@ function AddPlacePopup(props) {
         <input 
           type="text"
           aria-label="Title"
-          name="title"
+          name={fieldNames.placeTitle}
           className="project-form__input project-form__input_type_location-create-field"
           placeholder="Title"
           minLength="2"
@@ -41,19 +48,19 @@ function AddPlacePopup(props) {
           onChange={handleInputChange}
           required
         />
-        <p className="project-form__input-error project-form__input-error_field_location-title-input"></p>
+        <p className={titleFieldErrorClassName}>{errors[fieldNames.placeTitle]}</p>
       </div>
       <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">
         <input
           type="url"
           aria-label="Image link"
-          name="link"
+          name={fieldNames.placeLink}
           className="project-form__input project-form__input_type_location-create-field"
           placeholder="Image link"
           onChange={handleInputChange}
           required
         />
-        <p className="project-form__input-error project-form__input-error_field_location-image-link-input"></p>
+        <p className={linkFieldErrorClassName}>{errors[fieldNames.placeLink]}</p>
       </div>
     </PopupWithForm>
   );
