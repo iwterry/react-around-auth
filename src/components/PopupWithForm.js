@@ -3,11 +3,17 @@ import React from 'react';
 function PopupWithForm(props) {
   const { name, title, children, isOpen, onClose, onSubmit, isSubmitBtnDisabled, submitBtnText } = props;
 
+  const overlayRef = React.useRef();
+
   const submitBtnClassName = `project-form__submit-btn project-form__submit-btn_type_${name}` + 
     (isSubmitBtnDisabled ? ' project-form__submit-btn_disabled' : '');
 
+  function handleClick({ target }) { // closing popup by clicking on just the overlay and not the form
+   if(target === overlayRef.current) onClose();
+  }
+
   return (
-    <div className={`overlay ${isOpen ? 'overlay_opened' : ''}`}>
+    <div className={`overlay ${isOpen ? 'overlay_opened' : ''}`} ref={overlayRef} onClick={handleClick}>
       <div className="overlay__wrapper">
         <button
           type="button"

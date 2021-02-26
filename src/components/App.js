@@ -32,6 +32,26 @@ function App() {
   const [ isUpdatingProfile, setIsUpdatingProfile ] = React.useState(false);
   const [ isCreatingPlace, setIsCreatingPlace ] = React.useState(false);
   const [ isDeletingAfterConfirming, setIsDeletingAfterConfirming ] = React.useState(false);
+  function handleEscKey(evt) {
+    if(evt.key === 'Escape') {
+      closeAllPopups();
+    }
+  }
+
+  const isOpen = (
+    isEditAvatarPopupOpen || 
+    isEditProfilePopupOpen || 
+    isAddPlacePopupOpen || 
+    idOfCardToBeDeleted || /* for confirmation popup */
+    selectedCard._id      /* for image popup */
+  );
+  React.useEffect(() => {
+    if(isOpen) {
+      document.addEventListener('keydown', handleEscKey);
+    } else {
+      document.removeEventListener('keydown', handleEscKey);
+    }
+  }, [isOpen]);
 
   React.useEffect(() => {
     api.getUserProfile()
