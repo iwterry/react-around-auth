@@ -14,7 +14,11 @@ function Popup(props) {
   }
 
   return (
-    <div className={`overlay ${additionalCssClassesStr} ${isOpen ? 'overlay_opened' : ''}`} ref={overlayRef} onClick={handleClick}>
+    <div 
+      className={`overlay ${additionalCssClassesStr} ${isOpen ? 'overlay_opened' : ''}`} 
+      ref={overlayRef} 
+      onClick={handleClick}
+    >
       <div className="overlay__wrapper">
         <button
           type="button"

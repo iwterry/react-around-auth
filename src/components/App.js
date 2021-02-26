@@ -6,14 +6,15 @@ import Header from './Header.js';
 import Main from './Main.js';
 import Footer from './Footer.js';
 import ImagePopup from './ImagePopup.js';
-import api from '../utils/api.js';
-import { logErrors } from '../utils/utils.js';
-
-import defaultAvatar from '../images/profile-avatar.jpg';
 import EditProfilePopup from './EditProfilePopup.js';
 import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 import ConfirmationPromptPopup from './ConfirmationPromptPopup.js';
+
+import api from '../utils/api.js';
+import { logErrors } from '../utils/utils.js';
+
+import defaultAvatar from '../images/profile-avatar.jpg';
 
 function App() {
   const [ isEditProfilePopupOpen, setIsEditProfilePopupOpen ]  = React.useState(false);
@@ -32,11 +33,6 @@ function App() {
   const [ isUpdatingProfile, setIsUpdatingProfile ] = React.useState(false);
   const [ isCreatingPlace, setIsCreatingPlace ] = React.useState(false);
   const [ isDeletingAfterConfirming, setIsDeletingAfterConfirming ] = React.useState(false);
-  function handleEscKey(evt) {
-    if(evt.key === 'Escape') {
-      closeAllPopups();
-    }
-  }
 
   const isOpen = (
     isEditAvatarPopupOpen || 
@@ -45,11 +41,28 @@ function App() {
     idOfCardToBeDeleted || /* for confirmation popup */
     selectedCard._id      /* for image popup */
   );
-  React.useEffect(() => {
+
+
+  function closeAllPopups() {
+    setIsEditAvatarPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+    setIdOfCardToBeDeleted(null);
+    setSelectedCard({ ...selectedCard, _id: null });
+  }
+
+  function handleClosingAllPopupsUsingEscKey(evt) {
+    if(evt.key === 'Escape') {
+      closeAllPopups();
+    }
+  }
+
+
+  React.useEffect(() => { // using approach similar to earlier sprints
     if(isOpen) {
-      document.addEventListener('keydown', handleEscKey);
+      document.addEventListener('keydown', handleClosingAllPopupsUsingEscKey);
     } else {
-      document.removeEventListener('keydown', handleEscKey);
+      document.removeEventListener('keydown', handleClosingAllPopupsUsingEscKey);
     }
   }, [isOpen]);
 
@@ -64,6 +77,7 @@ function App() {
       .then(setCards)
       .catch(logErrors);
   }, []);
+
 
   function handleCardLike(clickedCardId, isClickedCardLikedAlreadyByUser) {
     api.updateCardLikes(clickedCardId, !isClickedCardLikedAlreadyByUser)
@@ -153,13 +167,6 @@ function App() {
       });
   }
 
-  function closeAllPopups() {
-    setIsEditAvatarPopupOpen(false);
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIdOfCardToBeDeleted(null);
-    setSelectedCard({ ...selectedCard, _id: null });
-  }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -176,13 +183,33 @@ function App() {
         />
         <Footer />
         
-        <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} isUpdatingProfile={isUpdatingProfile} />
+        <EditProfilePopup 
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups} 
+          onUpdateUser={handleUpdateUser} 
+          isUpdatingProfile={isUpdatingProfile} 
+        />
 
-        <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlace} isCreatingPlace={isCreatingPlace} />
+        <AddPlacePopup 
+          isOpen={isAddPlacePopupOpen} 
+          onClose={closeAllPopups} 
+          onAddPlace={handleAddPlace} 
+          isCreatingPlace={isCreatingPlace} 
+        />
 
-        <ConfirmationPromptPopup isOpen={idOfCardToBeDeleted !== null} onClose={closeAllPopups} onConfirmation={handleConfirmation} isDeletingAfterConfirming={isDeletingAfterConfirming} />
+        <ConfirmationPromptPopup 
+          isOpen={idOfCardToBeDeleted !== null} 
+          onClose={closeAllPopups} 
+          onConfirmation={handleConfirmation} 
+          isDeletingAfterConfirming={isDeletingAfterConfirming} 
+        />
           
-        <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} isUpdatingAvatar={isUpdatingAvatar} />
+        <EditAvatarPopup 
+          isOpen={isEditAvatarPopupOpen} 
+          onClose={closeAllPopups} 
+          onUpdateAvatar={handleUpdateAvatar} 
+          isUpdatingAvatar={isUpdatingAvatar} 
+        />
 
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />
       </div>
@@ -191,3 +218,17 @@ function App() {
 }
 
 export default App;
+/*
+  Note:
+  - All popups can be closed using close button, ESC key, and clicking on overlay (and not 
+    its contents)
+  - forms operate as follows
+    - submit button is disabled when having invalid inputs, submitting, and closing  form popups
+    - input errors are shown when inputs are invalid and are hidden when closing the form popups
+      and shown when opening
+    - when closing form popup, input fields are not reset, but they cleared when 
+      submitting (except for profile form to update user name and description)
+    - text change on submit button to show the user that information is being saved (except
+      when deleting cards)
+    - when deleting card, the user is asked to confirm first.
+*/

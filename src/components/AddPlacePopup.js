@@ -15,8 +15,17 @@ function AddPlacePopup(props) {
     placeTitle: 'location-title',
     placeLink: 'location-link'
   }
-  const titleFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeTitle, isOpen);
-  const linkFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.placeLink, isOpen);
+  const titleFieldErrorClassName = getInputFieldErrorClassName(
+    errors, 
+    fieldNames.placeTitle, 
+    isOpen
+  );
+  const linkFieldErrorClassName = getInputFieldErrorClassName(
+    errors, 
+    fieldNames.placeLink, 
+    isOpen
+  );
+
 
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
@@ -44,6 +53,7 @@ function AddPlacePopup(props) {
     setErrors(getInputErrors(errors, target));
     checkIfSubmitBtnShouldBeDisabled();
   }
+  
 
   return (
     <PopupWithForm 

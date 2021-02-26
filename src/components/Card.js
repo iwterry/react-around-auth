@@ -14,6 +14,7 @@ function Card(props) {
   const likeBtnClassName = 'location__like-btn' +
     (isCardLikedByCurrentUser ? ' location__like-btn_active' : '');
 
+
   function handleCardImageClick() {
     onCardSelect(card._id, card.name, card.link);
   }
@@ -25,6 +26,7 @@ function Card(props) {
   function handleDeleteBtnClick() {
     onCardDelete(card._id)
   }
+  
 
   return (
     <li className="location">

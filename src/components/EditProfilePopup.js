@@ -18,13 +18,22 @@ function EditProfilePopup(props) {
     profileName: 'profile-name',
     profileDescription: 'profile-description'
   }
-  const nameFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileName, isOpen);
-  const descriptionFieldErrorClassName = getInputFieldErrorClassName(errors, fieldNames.profileDescription, isOpen);
+  const nameFieldErrorClassName = getInputFieldErrorClassName(
+    errors, 
+    fieldNames.profileName, 
+    isOpen
+  );
+  const descriptionFieldErrorClassName = getInputFieldErrorClassName(
+    errors,
+    fieldNames.profileDescription, 
+    isOpen
+  );
 
   const PROFILE_NAME_MAX_LENGTH = 40;
   const PROFILE_NAME_MIN_LENGTH = 2;
   const PROFILE_DESCRIPTION_MAX_LENGTH = 200;
   const PROFILE_DESCRIPTION_MIN_LENGTH = 2;
+
 
   React.useEffect(() => {
     setName(currentUser.name);
@@ -34,6 +43,7 @@ function EditProfilePopup(props) {
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
   }, [name, description, isUpdatingProfile, isOpen]);
+
 
   function checkIfSubmitBtnShouldBeDisabled() {
     const hasInvalidInput = (
@@ -68,6 +78,7 @@ function EditProfilePopup(props) {
     evt.preventDefault();
     onUpdateUser(name, description);
   }
+  
 
   return (
     <PopupWithForm

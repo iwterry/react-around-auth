@@ -12,11 +12,16 @@ function EditAvatarPopup(props) {
   const avatarInputRef = React.createRef();
 
   const profileAvatarFieldName = 'profile-avatar';
-  const avatarFieldErrorClassName = getInputFieldErrorClassName(error, profileAvatarFieldName, isOpen);
+  const avatarFieldErrorClassName = getInputFieldErrorClassName(
+    error, 
+    profileAvatarFieldName, 
+    isOpen
+  );
 
   React.useEffect(() => {
     checkIfSubmitBtnShouldBeDisabled();
   }, [isUpdatingAvatar, isOpen]);
+
 
   function handleSubmit(evt) {
     evt.preventDefault();
@@ -37,6 +42,7 @@ function EditAvatarPopup(props) {
     setError(getInputErrors(error, inputElement));
     checkIfSubmitBtnShouldBeDisabled();
   }
+  
       
   return (
     <PopupWithForm 
