@@ -6,43 +6,47 @@ import { getInputErrors, getInputFieldErrorClassName } from '../utils/utils';
 function EditAvatarPopup(props) {
   const { isOpen, onClose, onUpdateAvatar, isUpdatingAvatar } = props;
   
-  const [error, setError] = React.useState({});
-  const [ isSubmitBtnDisabled, setIsSubmitBtnDisabled ] = React.useState(true);
+  const [ avatar, setAvatar ] = React.useState('');
+  const [ error, setError ] = React.useState({});
+  const [ hasUserChangedInput, setHasUserChangedInput ] = React.useState(false);
 
-  const avatarInputRef = React.createRef();
-
-  const profileAvatarFieldName = 'profile-avatar';
+  const PROFILE_AVATAR_FIELD_NAME = 'profile-avatar';
   const avatarFieldErrorClassName = getInputFieldErrorClassName(
     error, 
-    profileAvatarFieldName, 
+    PROFILE_AVATAR_FIELD_NAME, 
     isOpen
   );
-
-  React.useEffect(() => {
-    checkIfSubmitBtnShouldBeDisabled();
-  }, [isUpdatingAvatar, isOpen]);
-
+  const hasInvalidInput = error.hasOwnProperty(PROFILE_AVATAR_FIELD_NAME);
+  const isSubmitBtnDisabled = (
+    !hasUserChangedInput || 
+    isUpdatingAvatar || 
+    hasInvalidInput || 
+    !isOpen
+  );
+console.log('rendered');
 
   function handleSubmit(evt) {
     evt.preventDefault();
-
-    const avatarInputElement = avatarInputRef.current;
-    onUpdateAvatar(avatarInputElement.value);
-
-    avatarInputElement.value = '';
-  }
-
-  function checkIfSubmitBtnShouldBeDisabled() {
-    const hasInvalidInput = !avatarInputRef.current.validity.valid;
-
-    setIsSubmitBtnDisabled(isUpdatingAvatar || hasInvalidInput || !isOpen);
-  }
-
-  function handleInputValidation({ target: inputElement }) {
-    setError(getInputErrors(error, inputElement));
-    checkIfSubmitBtnShouldBeDisabled();
-  }
   
+    onUpdateAvatar(avatar);
+    setAvatar('');
+  }
+
+  function validateInput(inputElement) {
+    setError(getInputErrors(error, inputElement));
+    setAvatar(inputElement.value);
+  }
+
+  function handleInputChange({ target: avatarInputElement }) {
+    setAvatar(avatarInputElement.value);
+    validateInput(avatarInputElement);
+
+    setHasUserChangedInput(true);
+  }
+
+  function handleBlur({ target: inputElement }) {
+    validateInput(inputElement);
+  }
       
   return (
     <PopupWithForm 
@@ -58,15 +62,15 @@ function EditAvatarPopup(props) {
         <input
           type="url"
           aria-label="Avatar link"
-          name={profileAvatarFieldName}
+          name={PROFILE_AVATAR_FIELD_NAME}
           className="project-form__input project-form__input_type_profile-img-change-field"
           placeholder="Avatar link"
-          ref={avatarInputRef}
-          onChange={handleInputValidation}
-          onBlur={handleInputValidation}
+          value={avatar}
+          onChange={handleInputChange}
+          onBlur={handleBlur}
           required
         />
-        <p className={avatarFieldErrorClassName}>{error[profileAvatarFieldName]}</p>
+        <p className={avatarFieldErrorClassName}>{error[PROFILE_AVATAR_FIELD_NAME]}</p>
       </div>
     </PopupWithForm>
   );
