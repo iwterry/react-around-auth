@@ -68,7 +68,7 @@ function App() {
 
   React.useEffect(() => {
     api.getUserProfile()
-      .then(({ _id, name, about, avatar }) => setCurrentUser({ _id, name, about, avatar }))
+      .then(setCurrentUser)
       .catch(logErrors);
   }, []);
 
@@ -115,11 +115,7 @@ function App() {
   function handleUpdateUser(name, about) {
     setIsUpdatingProfile(true);
     api.updateUserProfile(name, about)
-      .then((updatedUser) => setCurrentUser({
-        ...currentUser,
-        name: updatedUser.name,
-        about: updatedUser.about 
-      }))
+      .then(setCurrentUser)
       .catch(logErrors)
       .finally(() => {
         closeAllPopups();
@@ -130,10 +126,7 @@ function App() {
   function handleUpdateAvatar(avatar) {
     setIsUpdatingAvatar(true);
     api.updateUserAvatar(avatar)
-      .then((updatedUser) => setCurrentUser({
-        ...currentUser,
-        avatar: updatedUser.avatar
-      }))
+      .then(setCurrentUser)
       .catch(logErrors)
       .finally(() => {
         closeAllPopups();
