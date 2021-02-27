@@ -3,20 +3,16 @@ import React from 'react';
 function Popup(props) {
   const { name, children, isOpen, onClose, additionalCssClassesStr='' } = props;
 
-  const overlayRef = React.useRef();
+  const OPENED_OVERLAY_CSS_CLASS = 'overlay_opened';
 
   function handleClick({ target }) { 
     // closing popup by clicking on just the overlay and not its contents
-   if(target === overlayRef.current) onClose();
-
-    // Chose to use refs to access the DOM element directly,
-    // but could also rely on CSS class '.overlay' instead.
+    if(target.classList.contains(OPENED_OVERLAY_CSS_CLASS)) onClose();
   }
 
   return (
     <div 
-      className={`overlay ${additionalCssClassesStr} ${isOpen ? 'overlay_opened' : ''}`} 
-      ref={overlayRef} 
+      className={`overlay ${additionalCssClassesStr} ${isOpen ? OPENED_OVERLAY_CSS_CLASS : ''}`} 
       onClick={handleClick}
     >
       <div className="overlay__wrapper">
