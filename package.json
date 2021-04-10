@@ -1,6 +1,6 @@
 {
-  "name": "around-react",
-  "homepage": "https://iwterry.github.io/around-react/",
+  "name": "react-around-auth",
+  "homepage": "https://github.com/iwterry/react-around-auth",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
