@@ -1,8 +1,4 @@
-.overlay__close-btn {
-  position: absolute;
-  top: -30px;
-  right: -30px;
-
+.header__nav-close-btn {
   width: 30px;
   height: 30px;
   padding: 0;
@@ -15,18 +11,10 @@
 
   cursor: pointer;
   transform: rotate(45deg);
+
+  display: none;
 }
 
-.overlay__close-btn:hover {
+.header__nav-close-btn:hover {
   opacity: 0.6;
-}
-
-@media screen and (min-width: 1024px) {
-  .overlay__close-btn {
-    top: -41px;
-    right: -41px;
-
-    width: 40px;
-    height: 40px;
-  }
 }

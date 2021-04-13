@@ -23,7 +23,7 @@ function EditAvatarPopup(props) {
     hasInvalidInput || 
     !isOpen
   );
-console.log('rendered');
+
 
   function handleSubmit(evt) {
     evt.preventDefault();

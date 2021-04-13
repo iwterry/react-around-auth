@@ -1,4 +1,5 @@
 import React from 'react';
+import { Switch, Route, useHistory, Redirect } from 'react-router-dom';
 
 import CurrentUserContext from '../contexts/CurrentUserContext.js';
 
@@ -11,10 +12,16 @@ import EditAvatarPopup from './EditAvatarPopup.js';
 import AddPlacePopup from './AddPlacePopup.js';
 import ConfirmationPromptPopup from './ConfirmationPromptPopup.js';
 
-import api from '../utils/api.js';
+import appDataApi from '../utils/appDataApi.js';
+import appAuthApi from '../utils/appAuthApi.js';
 import { logErrors } from '../utils/utils.js';
 
 import defaultAvatar from '../images/profile-avatar.jpg';
+
+import Register from './Register.js';
+import InfoTooltip from './InfoTooltip.js';
+import Login from './Login.js';
+import ProtectedRoute from './ProtectedRoute.js';
 
 function App() {
   const [ isEditProfilePopupOpen, setIsEditProfilePopupOpen ]  = React.useState(false);
@@ -33,14 +40,26 @@ function App() {
   const [ isUpdatingProfile, setIsUpdatingProfile ] = React.useState(false);
   const [ isCreatingPlace, setIsCreatingPlace ] = React.useState(false);
   const [ isDeletingAfterConfirming, setIsDeletingAfterConfirming ] = React.useState(false);
+  const [ userEmail, setUserEmail ] = React.useState('');
+  const [ isRegistrationError, setIsRegistrationError ] = React.useState(false);
+  const [ isRegistrationSuccess, setIsRegistrationSuccess ] = React.useState(false);
+  const [ isRegistering, setIsRegistering ] = React.useState(false);
+  const [ isUserOnRegistrationPage, setIsUserOnRegistrationPage ] = React.useState(false);
+  const [ isLoggingIn, setIsLoggingIn ] = React.useState(false);
+  const [ isLoggedIn, setIsLoggedIn ] = React.useState(false);
+  const [ isUserOnLoginPage, setIsUserOnLoginPage ] = React.useState(false);
 
   const isOpen = (
     isEditAvatarPopupOpen || 
     isEditProfilePopupOpen || 
     isAddPlacePopupOpen || 
     idOfCardToBeDeleted || /* for confirmation popup */
-    selectedCard._id      /* for image popup */
+    selectedCard._id    ||  /* for image popup */
+    isRegistrationSuccess ||
+    isRegistrationError
   );
+
+  const history = useHistory();
 
 
   function closeAllPopups() {
@@ -49,6 +68,8 @@ function App() {
     setIsAddPlacePopupOpen(false);
     setIdOfCardToBeDeleted(null);
     setSelectedCard({ ...selectedCard, _id: null });
+    setIsRegistrationError(false);
+    setIsRegistrationSuccess(false);
   }
 
   function handleClosingAllPopupsUsingEscKey(evt) {
@@ -67,20 +88,30 @@ function App() {
   }, [isOpen]);
 
   React.useEffect(() => {
-    api.getUserProfile()
+    appDataApi.getUserProfile()
       .then(setCurrentUser)
       .catch(logErrors);
   }, []);
 
   React.useEffect(() => {
-    api.getInitialCards()
+    appDataApi.getInitialCards()
       .then(setCards)
       .catch(logErrors);
   }, []);
 
+  React.useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if(token != undefined) {
+      setIsLoggedIn(true);
+      appAuthApi.getEmail(token)
+        .then(({ data: { email }}) => setUserEmail(email))
+        .catch(logErrors);
+    }
+  }, []);
+
 
   function handleCardLike(clickedCardId, isClickedCardLikedAlreadyByUser) {
-    api.updateCardLikes(clickedCardId, !isClickedCardLikedAlreadyByUser)
+    appDataApi.updateCardLikes(clickedCardId, !isClickedCardLikedAlreadyByUser)
       .then((updatedCard) => {
         const updatedCards = cards.map((card) => card._id === clickedCardId ? updatedCard : card);
         setCards(updatedCards);
@@ -114,7 +145,7 @@ function App() {
 
   function handleUpdateUser(name, about) {
     setIsUpdatingProfile(true);
-    api.updateUserProfile(name, about)
+    appDataApi.updateUserProfile(name, about)
       .then(setCurrentUser)
       .catch(logErrors)
       .finally(() => {
@@ -125,7 +156,7 @@ function App() {
 
   function handleUpdateAvatar(avatar) {
     setIsUpdatingAvatar(true);
-    api.updateUserAvatar(avatar)
+    appDataApi.updateUserAvatar(avatar)
       .then(setCurrentUser)
       .catch(logErrors)
       .finally(() => {
@@ -136,7 +167,7 @@ function App() {
 
   function handleAddPlace(name, link) {
     setIsCreatingPlace(true);
-    api.createCard(name, link)
+    appDataApi.createCard(name, link)
       .then((newCard) => setCards([newCard, ...cards]))
       .catch(logErrors)
       .finally(() => {
@@ -147,7 +178,7 @@ function App() {
 
   function handleConfirmation() {
     setIsDeletingAfterConfirming(true);
-    api.deleteCard(idOfCardToBeDeleted)
+    appDataApi.deleteCard(idOfCardToBeDeleted)
       .then((data) => {
         console.log('returned:', data);
         const updatedCards = cards.filter((aCard) => aCard._id !== idOfCardToBeDeleted);
@@ -160,51 +191,150 @@ function App() {
       });
   }
 
+  function handleRegisterClick(email, password) { 
+    setIsRegistering(true);
+    appAuthApi.signup(email, password)
+      .then((data) => {
+        setIsRegistrationSuccess(true);
+        history.push('/signin');
+      })
+      .catch((err) => {
+        logErrors(err);
+        setIsRegistrationError(true);
+      }).finally(() => setIsRegistering(false));
+  }
+
+  function handleLoginClick(email, password) {
+    setIsLoggingIn(true);
+    appAuthApi.signin(email, password)
+      .then(({ token }) => {
+        localStorage.setItem('jwt', token);
+        setUserEmail(email);
+        setIsLoggedIn(true);
+        history.push('/');
+      })
+      .catch((err) => {
+        logErrors(err);
+      }).finally(() => setIsLoggingIn(false));
+  }
+
+  function handleSignOut() {
+    localStorage.removeItem('jwt');
+    setIsLoggedIn(false);
+    setUserEmail('');
+    history.push('/signin');
+  }
+
+  function redirectWhenUserIsLoggedIn(Component, props) {
+    if(isLoggedIn) {
+      return <Redirect to="/" /> 
+    } else {
+      return <Component {...props} />
+    }
+  }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header />
-        <Main
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onCardDelete={handleCardDelete} 
-          onCardSelect={handleCardSelect}
-          onCardLike={handleCardLike}
-          cards={cards}
+        <Header 
+          isUserLoggedIn={isLoggedIn} 
+          userEmail={userEmail}
+          isUserOnLoginPage={isUserOnLoginPage}
+          isUserOnRegistrationPage={isUserOnRegistrationPage}
+          onSignOut={handleSignOut}
         />
-        <Footer />
         
-        <EditProfilePopup 
-          isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups} 
-          onUpdateUser={handleUpdateUser} 
-          isUpdatingProfile={isUpdatingProfile} 
-        />
+        <Switch>
+          {/* Logged in users should not be able to visit the login and registration routes. */}
+          <Route path="/signin">
+            {
+              redirectWhenUserIsLoggedIn(Login, {
+                onLogin: handleLoginClick, 
+                isLoggingIn: isLoggingIn,
+                onLoginPage: setIsUserOnLoginPage
+              })
+            }
+          </Route>
 
-        <AddPlacePopup 
-          isOpen={isAddPlacePopupOpen} 
-          onClose={closeAllPopups} 
-          onAddPlace={handleAddPlace} 
-          isCreatingPlace={isCreatingPlace} 
-        />
+          <Route path="/signup">
+            {
+              redirectWhenUserIsLoggedIn(Register, {
+                onRegister: handleRegisterClick,
+                isRegistering: isRegistering,
+                onRegistrationPage: setIsUserOnRegistrationPage                
+              })
+            }
+          </Route>
 
-        <ConfirmationPromptPopup 
-          isOpen={idOfCardToBeDeleted !== null} 
-          onClose={closeAllPopups} 
-          onConfirmation={handleConfirmation} 
-          isDeletingAfterConfirming={isDeletingAfterConfirming} 
-        />
-          
-        <EditAvatarPopup 
-          isOpen={isEditAvatarPopupOpen} 
-          onClose={closeAllPopups} 
-          onUpdateAvatar={handleUpdateAvatar} 
-          isUpdatingAvatar={isUpdatingAvatar} 
-        />
+          {/* Users not logged in should only be able to login or register */}
+          <ProtectedRoute 
+            Component={Main}
+            path="/"
+            isLoggedIn={isLoggedIn}
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onCardDelete={handleCardDelete} 
+            onCardSelect={handleCardSelect}
+            onCardLike={handleCardLike}
+            cards={cards}
+          />
+        </Switch>
+        <Footer />
 
-        <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+        {/* 
+          Since only certain components are relevant depending on whether the user 
+          is logged in, there is little need to have irrelevant components be
+          visible through devtools. Helps in security by limiting HTML manipulation.
+        */}
+        { isLoggedIn && (
+          <>
+            <EditProfilePopup 
+              isOpen={isEditProfilePopupOpen}
+              onClose={closeAllPopups} 
+              onUpdateUser={handleUpdateUser} 
+              isUpdatingProfile={isUpdatingProfile} 
+            />
+
+            <AddPlacePopup 
+              isOpen={isAddPlacePopupOpen} 
+              onClose={closeAllPopups} 
+              onAddPlace={handleAddPlace} 
+              isCreatingPlace={isCreatingPlace} 
+            />
+
+            <ConfirmationPromptPopup 
+              isOpen={idOfCardToBeDeleted !== null} 
+              onClose={closeAllPopups} 
+              onConfirmation={handleConfirmation} 
+              isDeletingAfterConfirming={isDeletingAfterConfirming} 
+            />
+              
+            <EditAvatarPopup 
+              isOpen={isEditAvatarPopupOpen} 
+              onClose={closeAllPopups} 
+              onUpdateAvatar={handleUpdateAvatar} 
+              isUpdatingAvatar={isUpdatingAvatar} 
+            />
+
+            <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+          </>
+        )}
+
+
+        <InfoTooltip 
+          iconType="success" 
+          description="Success! You have now been registered."
+          isOpen={isRegistrationSuccess}
+          onClose={closeAllPopups}
+        />
+        <InfoTooltip 
+          iconType="error" 
+          description="Oops, something went wrong! Please try again."
+          isOpen={isRegistrationError}
+          onClose={closeAllPopups}
+        />
+        
       </div>
     </CurrentUserContext.Provider>
   );

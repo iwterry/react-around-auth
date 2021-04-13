@@ -1,4 +1,5 @@
 import React from 'react';
+import Form from './Form';
 import Popup from './Popup';
 
 function PopupWithForm(props) {
@@ -12,20 +13,16 @@ function PopupWithForm(props) {
 
   return (
     <Popup name={name} isOpen={isOpen} onClose={onClose}>
-      <form 
-        name={name} 
-        className={`project-form project-form_type_${name}`} 
+      <Form
+        name={name}
+        title={title}
+        submitBtnText={submitBtnText}
+        submitBtnClassName={submitBtnClassName}
+        isSubmitBtnDisabled={isSubmitBtnDisabled}
         onSubmit={onSubmit} 
-        noValidate
       > 
-        <h3 className={`project-form__title project-form__title_type_${name}`}>
-          {title}
-        </h3>
         {children}
-        <button type="submit" className={submitBtnClassName} disabled={isSubmitBtnDisabled}>
-          {submitBtnText || 'Submit'}
-        </button>
-      </form>
+      </Form>
     </Popup>
   );
 }
