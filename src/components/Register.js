@@ -3,11 +3,19 @@ import { Link } from 'react-router-dom';
 import UserAuthForm from './UserAuthForm';
 
 function Register(props) {
-  const { onRegister, isRegistering, onRegistrationPage } = props;
+  const { onRegister, isRegistering, setUserIsOnRegistrationPage } = props;
+
+  /*
+    Since this component only renders on the when user is on registration endpoint, 
+    this component will let the app know that it has mounted so that the Header
+    component can display the correct information on the registration page
+    (regardless of what URL for that endpoint is).
+  */
   React.useEffect(() => {
-    onRegistrationPage(true);
-    return () => onRegistrationPage(false);
+    setUserIsOnRegistrationPage(true);
+    return () => setUserIsOnRegistrationPage(false); // no longer on registration page
   }, []);
+
   const redirectionInfo = (
     <>
       Already a member? Log in {" "}

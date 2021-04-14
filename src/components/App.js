@@ -249,7 +249,7 @@ function App() {
               redirectWhenUserIsLoggedIn(Login, {
                 onLogin: handleLoginClick, 
                 isLoggingIn: isLoggingIn,
-                onLoginPage: setIsUserOnLoginPage
+                setUserIsOnLoginPage: setIsUserOnLoginPage
               })
             }
           </Route>
@@ -259,7 +259,7 @@ function App() {
               redirectWhenUserIsLoggedIn(Register, {
                 onRegister: handleRegisterClick,
                 isRegistering: isRegistering,
-                onRegistrationPage: setIsUserOnRegistrationPage                
+                setUserIsOnRegistrationPage: setIsUserOnRegistrationPage                
               })
             }
           </Route>

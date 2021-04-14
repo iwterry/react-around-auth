@@ -3,11 +3,19 @@ import { Link } from 'react-router-dom';
 import UserAuthForm from './UserAuthForm';
 
 function Login(props) {
-  const { isLoggingIn, onLogin, onLoginPage } = props;
+  const { isLoggingIn, onLogin, setUserIsOnLoginPage } = props;
+
+  /*
+    Since this component only renders on the when user is on login endpoint, 
+    this component will let the app know that it has mounted so that the Header
+    component can display the correct information on the login page
+    (regardless of what that URL for that endpoint is).
+  */
   React.useEffect(() => {
-    onLoginPage(true);
-    return () => onLoginPage(false);
+    setUserIsOnLoginPage(true);
+    return () => setUserIsOnLoginPage(false);
   }, []);
+
   const redirectionInfo = (
     <>
       Not a member yet? Sign up {" "}
