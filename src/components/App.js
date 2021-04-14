@@ -146,34 +146,34 @@ function App() {
   function handleUpdateUser(name, about) {
     setIsUpdatingProfile(true);
     appDataApi.updateUserProfile(name, about)
-      .then(setCurrentUser)
-      .catch(logErrors)
-      .finally(() => {
+      .then((user) => {
+        setCurrentUser(user);
         closeAllPopups();
-        setIsUpdatingProfile(false);
-      });
+      })
+      .catch(logErrors)
+      .finally(() =>  setIsUpdatingProfile(false));
   }
 
   function handleUpdateAvatar(avatar) {
     setIsUpdatingAvatar(true);
     appDataApi.updateUserAvatar(avatar)
-      .then(setCurrentUser)
-      .catch(logErrors)
-      .finally(() => {
+      .then((user) => {
+        setCurrentUser(user);
         closeAllPopups();
-        setIsUpdatingAvatar(false);
-      });
+      })
+      .catch(logErrors)
+      .finally(() => setIsUpdatingAvatar(false));
   }
 
   function handleAddPlace(name, link) {
     setIsCreatingPlace(true);
     appDataApi.createCard(name, link)
-      .then((newCard) => setCards([newCard, ...cards]))
-      .catch(logErrors)
-      .finally(() => {
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
         closeAllPopups();
-        setIsCreatingPlace(false);
-      });
+      })
+      .catch(logErrors)
+      .finally(() => setIsCreatingPlace(false));
   }
 
   function handleConfirmation() {
@@ -183,12 +183,10 @@ function App() {
         console.log('returned:', data);
         const updatedCards = cards.filter((aCard) => aCard._id !== idOfCardToBeDeleted);
         setCards(updatedCards);
+        closeAllPopups();
       })
       .catch(logErrors)
-      .finally(() => {
-        closeAllPopups();
-        setIsDeletingAfterConfirming(false);
-      });
+      .finally(() => setIsDeletingAfterConfirming(false));
   }
 
   function handleRegisterClick(email, password) { 
@@ -334,7 +332,7 @@ function App() {
           isOpen={isRegistrationError}
           onClose={closeAllPopups}
         />
-        
+
       </div>
     </CurrentUserContext.Provider>
   );
