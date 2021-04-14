@@ -101,7 +101,7 @@ function App() {
 
   React.useEffect(() => {
     const token = localStorage.getItem('jwt');
-    if(token != undefined) {
+    if(token) {
       setIsLoggedIn(true);
       appAuthApi.getEmail(token)
         .then(({ data: { email }}) => setUserEmail(email))
