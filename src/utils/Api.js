@@ -1,3 +1,7 @@
+/*
+  Note: the name of the file is Api.js instead of api.js to reflect that the
+  file will export a class and not an instance of a class like before.
+*/
 class Api {
   constructor({ baseUrl, headers={} }) {
     this._baseUrl = baseUrl;
