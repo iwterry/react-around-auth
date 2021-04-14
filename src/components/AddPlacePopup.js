@@ -8,29 +8,35 @@ function AddPlacePopup(props) {
   const [ title, setTitle ] = React.useState('');
   const [ link, setLink ] = React.useState(''); 
   const [ errors, setErrors ] = React.useState({});
-  const [ hasUserChangedInput, setHasUserChangedInput ] = React.useState(false);
+
+  React.useEffect(() => {
+    setTitle('');
+    setLink('');
+    setErrors({});
+  }, [isOpen]);
 
 
   const fieldNames = {
     placeTitle: 'location-title',
     placeLink: 'location-link'
   }
-  const titleFieldErrorClassName = getInputFieldErrorClassName(
-    errors, 
-    fieldNames.placeTitle, 
-    isOpen
-  );
-  const linkFieldErrorClassName = getInputFieldErrorClassName(
-    errors, 
-    fieldNames.placeLink, 
-    isOpen
-  );
-  const hasInvalidInput = (  
-    errors.hasOwnProperty(fieldNames.placeTitle) ||
-    errors.hasOwnProperty(fieldNames.placeLink)
-  );
+
+  const fieldErrorClassNames = Object.keys(fieldNames).reduce((errorClassNames, key) => {
+    const errorClassName = getInputFieldErrorClassName(
+      errors, 
+      fieldNames[key], 
+      isOpen
+    );
+
+    errorClassNames[key] = errorClassName;
+    return errorClassNames;
+  }, {});
+
+  const hasInvalidInput = Object.keys(errors).length > 0;
+
   const isSubmitBtnDisabled = (
-    !hasUserChangedInput ||
+    title === '' || // when user has not changed title input
+    link === '' || // or link input
     isCreatingPlace ||
     hasInvalidInput || 
     !isOpen
@@ -41,26 +47,20 @@ function AddPlacePopup(props) {
     evt.preventDefault();
 
     onAddPlace(title, link);
-
-    setTitle('');
-    setLink('');
   }
 
   function validateInput(inputElement) {
     setErrors(getInputErrors(errors, inputElement));
   }
 
-  function handleInputChange({ target: inputElement }) {
-    switch(inputElement.name) {
-      case fieldNames.placeTitle:
-        setTitle(inputElement.value);
-        break;
-      case fieldNames.placeLink:
-        setLink(inputElement.value);
-        break;
-    }
+  function handleTitleInputChange({ target: titleInputElement }) {
+    setTitle(titleInputElement.value);
+    validateInput(titleInputElement);
+  }
 
-    setHasUserChangedInput(true);
+  function handleLinkInputChange({ target: linkInputElement }) {
+    setLink(linkInputElement.value);
+    validateInput(linkInputElement);
   }
 
   function handleBlur({ target: inputElement }) {
@@ -88,11 +88,11 @@ function AddPlacePopup(props) {
           minLength="2"
           maxLength="30"
           value={title}
-          onChange={handleInputChange}
+          onChange={handleTitleInputChange}
           onBlur={handleBlur}
           required
         />
-        <p className={titleFieldErrorClassName}>{errors[fieldNames.placeTitle]}</p>
+        <p className={fieldErrorClassNames.placeTitle}>{errors[fieldNames.placeTitle]}</p>
       </div>
       <div className="project-form__field-wrapper project-form__field-wrapper_form_location-create">
         <input
@@ -102,11 +102,11 @@ function AddPlacePopup(props) {
           className="project-form__input project-form__input_type_location-create-field"
           placeholder="Image link"
           value={link}
-          onChange={handleInputChange}
+          onChange={handleLinkInputChange}
           onBlur={handleBlur}
           required
         />
-        <p className={linkFieldErrorClassName}>{errors[fieldNames.placeLink]}</p>
+        <p className={fieldErrorClassNames.placeLink}>{errors[fieldNames.placeLink]}</p>
       </div>
     </PopupWithForm>
   );

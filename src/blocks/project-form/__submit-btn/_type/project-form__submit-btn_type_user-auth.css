@@ -1,4 +1,4 @@
-.project-form__submit-btn_type_user-reg-and-login {
+.project-form__submit-btn_type_user-auth {
   padding: 14px 0;
   margin: 0;
 
@@ -6,12 +6,12 @@
   color: #000;
 }
 
-.project-form__submit-btn_type_user-reg-and-login:hover {
+.project-form__submit-btn_type_user-auth:hover {
   opacity: 0.85;
 }
 
 @media screen and (max-width: 1023px) {
-  .project-form__submit-btn_type_user-reg-and-login {
+  .project-form__submit-btn_type_user-auth {
     width: 260px;
 
     font-size: 16px;

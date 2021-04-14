@@ -2,7 +2,7 @@
   Note: This block is created because not every .project-form block will have this
   as an element, so I did not want to make it an element of the .project-form block
 */
-.project-reg-and-login-form-container__redirection-info {
+.project-user-auth-form-container__redirection-info {
   width: 260px;
   margin: 0;
   padding: 20px 0 0;
@@ -14,7 +14,7 @@
 }
 
 @media screen and (min-width: 1024px) {
-  .project-reg-and-login-form-container__redirection-info {
+  .project-user-auth-form-container__redirection-info {
     width: 358px;
     padding-top: 15px;
 

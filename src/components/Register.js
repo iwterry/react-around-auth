@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import RegisterOrLogin from './RegisterOrLogin';
+import UserAuthForm from './UserAuthForm';
 
 function Register(props) {
   const { onRegister, isRegistering, onRegistrationPage } = props;
@@ -11,20 +11,20 @@ function Register(props) {
   const redirectionInfo = (
     <>
       Already a member? Log in {" "}
-      <Link to="/signin" className="project-reg-and-login-form-container__link">
+      <Link to="/signin" className="project-user-auth-form-container__link">
         here
       </Link>!
     </>
   );
 
   return (
-    <RegisterOrLogin
-      name="user-reg-and-login"
+    <UserAuthForm
+      name="user-auth"
       title="Sign up"
       submitBtnText={isRegistering ? 'Signing up' : 'Sign up'}
       redirectionInfo={redirectionInfo}
-      isRegisteringOrLoggingIn={isRegistering}
-      onRegisterOrLogin={onRegister}
+      isProcessing={isRegistering}
+      onUserAuth={onRegister}
     />
   );
 }

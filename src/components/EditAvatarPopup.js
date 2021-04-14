@@ -8,7 +8,11 @@ function EditAvatarPopup(props) {
   
   const [ avatar, setAvatar ] = React.useState('');
   const [ error, setError ] = React.useState({});
-  const [ hasUserChangedInput, setHasUserChangedInput ] = React.useState(false);
+
+  React.useEffect(() => { // reset error and input field 
+    setAvatar('');
+    setError({});
+  }, [isOpen])
 
   const PROFILE_AVATAR_FIELD_NAME = 'profile-avatar';
   const avatarFieldErrorClassName = getInputFieldErrorClassName(
@@ -18,7 +22,7 @@ function EditAvatarPopup(props) {
   );
   const hasInvalidInput = error.hasOwnProperty(PROFILE_AVATAR_FIELD_NAME);
   const isSubmitBtnDisabled = (
-    !hasUserChangedInput || 
+    avatar === '' || 
     isUpdatingAvatar || 
     hasInvalidInput || 
     !isOpen
@@ -29,19 +33,15 @@ function EditAvatarPopup(props) {
     evt.preventDefault();
   
     onUpdateAvatar(avatar);
-    setAvatar('');
   }
 
   function validateInput(inputElement) {
     setError(getInputErrors(error, inputElement));
-    setAvatar(inputElement.value);
   }
 
   function handleInputChange({ target: avatarInputElement }) {
     setAvatar(avatarInputElement.value);
     validateInput(avatarInputElement);
-
-    setHasUserChangedInput(true);
   }
 
   function handleBlur({ target: inputElement }) {

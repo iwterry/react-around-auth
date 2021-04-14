@@ -56,21 +56,18 @@ function EditProfilePopup(props) {
     setIsSubmitBtnDisabled(isUpdatingProfile || hasInvalidInput || !isOpen);
   }
 
-  function handleInputChange({ target }) {
-    switch(target.name) {
-      case fieldNames.profileName:
-        setName(target.value);
-        break;
-      case fieldNames.profileDescription:
-        setDescription(target.value);
-        break;
-    }
-
-    setErrors(getInputErrors(errors, target));
+  function handleProfileNameInputChange({ target: profileNameInputElement }) {
+    setName(profileNameInputElement.value);
+    setErrors(getInputErrors(errors, profileNameInputElement));
   }
 
-  function handleBlur({ target }) {
-    setErrors(getInputErrors(errors, target));
+  function handleProfileDescriptionInputChange({ target: profileDescriptionInputElement }) {
+    setDescription(profileDescriptionInputElement.value);
+    setErrors(getInputErrors(errors, profileDescriptionInputElement));
+  }
+
+  function handleBlur({ target: inputElement }) {
+    setErrors(getInputErrors(errors, inputElement));
     checkIfSubmitBtnShouldBeDisabled();
   }
 
@@ -100,7 +97,7 @@ function EditProfilePopup(props) {
           minLength={PROFILE_NAME_MIN_LENGTH}
           maxLength={PROFILE_NAME_MAX_LENGTH}
           value={name}
-          onChange={handleInputChange}
+          onChange={handleProfileNameInputChange}
           onBlur={handleBlur}
           required
         />
@@ -116,7 +113,7 @@ function EditProfilePopup(props) {
           minLength={PROFILE_DESCRIPTION_MIN_LENGTH}
           maxLength={PROFILE_DESCRIPTION_MAX_LENGTH}
           value={description}
-          onChange={handleInputChange}
+          onChange={handleProfileDescriptionInputChange}
           onBlur={handleBlur}
           required
         />
