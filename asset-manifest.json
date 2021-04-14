@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/iwterry/react-around-auth/static/css/main.02e14177.chunk.css",
-    "main.js": "/iwterry/react-around-auth/static/js/main.10ea3ab3.chunk.js",
-    "main.js.map": "/iwterry/react-around-auth/static/js/main.10ea3ab3.chunk.js.map",
+    "main.css": "/iwterry/react-around-auth/static/css/main.654de9e0.chunk.css",
+    "main.js": "/iwterry/react-around-auth/static/js/main.72a6471b.chunk.js",
+    "main.js.map": "/iwterry/react-around-auth/static/js/main.72a6471b.chunk.js.map",
     "runtime-main.js": "/iwterry/react-around-auth/static/js/runtime-main.ac5150bb.js",
     "runtime-main.js.map": "/iwterry/react-around-auth/static/js/runtime-main.ac5150bb.js.map",
     "static/js/2.87ac1510.chunk.js": "/iwterry/react-around-auth/static/js/2.87ac1510.chunk.js",
@@ -10,7 +10,7 @@
     "static/js/3.ad2e10ea.chunk.js": "/iwterry/react-around-auth/static/js/3.ad2e10ea.chunk.js",
     "static/js/3.ad2e10ea.chunk.js.map": "/iwterry/react-around-auth/static/js/3.ad2e10ea.chunk.js.map",
     "index.html": "/iwterry/react-around-auth/index.html",
-    "static/css/main.02e14177.chunk.css.map": "/iwterry/react-around-auth/static/css/main.02e14177.chunk.css.map",
+    "static/css/main.654de9e0.chunk.css.map": "/iwterry/react-around-auth/static/css/main.654de9e0.chunk.css.map",
     "static/js/2.87ac1510.chunk.js.LICENSE.txt": "/iwterry/react-around-auth/static/js/2.87ac1510.chunk.js.LICENSE.txt",
     "static/media/index.css": "/iwterry/react-around-auth/static/media/success.762b0c95.svg",
     "static/media/header-vector.70737bb4.svg": "/iwterry/react-around-auth/static/media/header-vector.70737bb4.svg",
@@ -19,7 +19,7 @@
   "entrypoints": [
     "static/js/runtime-main.ac5150bb.js",
     "static/js/2.87ac1510.chunk.js",
-    "static/css/main.02e14177.chunk.css",
-    "static/js/main.10ea3ab3.chunk.js"
+    "static/css/main.654de9e0.chunk.css",
+    "static/js/main.72a6471b.chunk.js"
   ]
 }
